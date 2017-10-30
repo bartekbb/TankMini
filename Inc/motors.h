@@ -21,6 +21,7 @@ typedef struct Motor {
 
 } Motor;
 
+extern Motor Left_F, Left_R, Right_F, Right_R;
 
 
 void motor_Set_Speed(Motor* LF, Motor* LR, Motor* RF, Motor* RR );
@@ -29,6 +30,8 @@ void motor_Set_Speed(Motor* LF, Motor* LR, Motor* RF, Motor* RR );
 void motor_Calculate_Speed(Motor* motor);
 /* Function calculates new speed values if closed control loop mode is enabled */
 
+
+void motor_Init(Motor * m);
 void motor_Init_With_Correction (Motor* LF, Motor* RF);
 
 #endif /* APPLICATION_USER_MOTORS_H_ */

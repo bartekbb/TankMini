@@ -52,7 +52,7 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN Includes */     
-
+#include "motors.h"
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
@@ -135,6 +135,11 @@ void TaskFunction02(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+	  Left_F.speed = 30;
+	  Left_R.speed = 30;
+	  Right_F.speed = 30;
+	  Right_R.speed = 30;
+	  motor_Set_Speed(&Left_F, &Left_R, &Right_F, &Right_R);
     osDelay(1);
   }
   /* USER CODE END TaskFunction02 */

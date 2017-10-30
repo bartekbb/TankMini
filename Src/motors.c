@@ -84,6 +84,16 @@ void motor_Set_Speed(Motor* LF, Motor* LR, Motor* RF, Motor* RR ){
 
 }
 
+void motor_Init(Motor * m){
+	m->correction =0;
+	m->isCorrection = 0;
+	m->isPIDEnable = 0;
+	m->kd = 0;
+	m->kp = 0;
+	m->ki = 0;
+	m->speed = 0;
+}
+
 void motor_Init_With_Correction (Motor* LF, Motor* RF){
 	LF->correction = 1;
 	RF->correction = 1;
