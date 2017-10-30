@@ -8,9 +8,9 @@
 #ifndef APPLICATION_USER_UART_STRUCTURES_H_
 #define APPLICATION_USER_UART_STRUCTURES_H_
 
-struct To_STM_Motor_Speed{
-	int speedL, speedR;
-};
+typedef struct To_STM_Motor_Speed{
+	int speedL, speedR, turnON;
+} To_STM_Motor_Speed;
 
 
 

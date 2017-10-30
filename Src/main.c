@@ -60,14 +60,17 @@
 
 /* USER CODE BEGIN Includes */
 #include "motors.h"
+#include "uart_structures.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-uint8_t recByte_u2, recByte_u3;
-uint8_t state_u2 = 1, state_u3 = 1;
+uint8_t recByte_u2, recNumber_u2, recByte_u3;
+uint8_t state_u2 = 1, frameCplt, state_u3 = 1;
+
+To_STM_Motor_Speed s1;
 
 /* USER CODE END PV */
 
@@ -80,6 +83,9 @@ void MX_FREERTOS_Init(void);
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 	if(huart->Instance == huart2.Instance){
 		switch(state_u2){
+		/*
+		 * Wzór ramki: [ : | nr ramki | dane | @ ]
+		 * */
 		case 1:
 			if(recByte_u2 == ':'){
 				state_u2 = 2;
@@ -87,14 +93,39 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 			HAL_UART_Receive_IT(&huart2, &recByte_u2, 1);
 			break;
 		case 2:
+			recNumber_u2 = recByte_u2;
+			// wybor numeru ramki danych i odbior do struktury
 			switch(recByte_u2){
 			case 1:
+				HAL_UART_Receive_IT(&huart2,(uint8_t*) &s1, sizeof(s1));
+				state_u2 = 3;
+				break;
+			case 2:
+				HAL_UART_Receive_IT(&huart2,(uint8_t*) &s1, sizeof(s1));
+				state_u2 = 3;
+				break;
+			default:
+				// odebrnao cos innego - powrot do oczekiwania na pierwszy znak ramki
 				HAL_UART_Receive_IT(&huart2, &recByte_u2, 1);
+				break;
 			}
 			break;
+
 		case 3:
+			// odbierz znak koñca / crc
+			HAL_UART_Receive_IT(&huart2, &recByte_u2, 1);
+			state_u2=4;
+			break;
+		case 4:
+			if(recByte_u2 == '@'){
+				// ustaw flage
+				frameCplt = 1;
+			}
+			HAL_UART_Receive_IT(&huart2, &recByte_u2, 1);
+			state_u2 = 1;
 			break;
 		default:
+			HAL_UART_Receive_IT(&huart2, &recByte_u2, 1);
 			break;
 
 		}
@@ -156,6 +187,13 @@ int main(void)
   /* USER CODE BEGIN 2 */
   HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_ALL);
   HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+
+  motor_Init(&Left_F);
+  motor_Init(&Left_R);
+  motor_Init(&Right_F);
+  motor_Init(&Right_F);
+
+
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_ALL);
 
   HAL_UART_Receive_IT(&huart2, &recByte_u2, 1);

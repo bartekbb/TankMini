@@ -53,6 +53,7 @@
 
 /* USER CODE BEGIN Includes */     
 #include "motors.h"
+#include "uart_structures.h"
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
@@ -60,6 +61,8 @@ osThreadId defaultTaskHandle;
 osThreadId Task02Handle;
 
 /* USER CODE BEGIN Variables */
+extern uint8_t frameCplt;
+extern To_STM_Motor_Speed s1;
 
 /* USER CODE END Variables */
 
@@ -123,6 +126,19 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+	if (frameCplt){
+		frameCplt=0;
+		if( s1.turnON == 1){
+			if (s1.speedL >=-100 && s1.speedL <= 100){ Left_F.speed = s1.speedL; Left_R.speed = s1.speedL;}
+			if (s1.speedR >=-100 && s1.speedR <= 100){ Right_F.speed = s1.speedR; Right_R.speed = s1.speedR;}
+		}
+		else{
+			Left_F.speed = 0;
+			Left_R.speed = 0;
+			Right_F.speed = 0;
+			Right_R.speed = 0;
+		}
+	}
     osDelay(1);
   }
   /* USER CODE END StartDefaultTask */
