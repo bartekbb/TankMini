@@ -51,7 +51,6 @@
 #include "cmsis_os.h"
 #include "adc.h"
 #include "dma.h"
-#include "fatfs.h"
 #include "i2c.h"
 #include "spi.h"
 #include "tim.h"
@@ -71,7 +70,7 @@ uint8_t recByte_u2, recNumber_u2, recByte_u3;
 uint8_t state_u2 = 1, frameCplt, state_u3 = 1;
 
 To_STM_Motor_Speed s1;
-
+char data[2];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -83,6 +82,7 @@ void MX_FREERTOS_Init(void);
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 	if(huart->Instance == huart2.Instance){
 		switch(state_u2){
+
 		/*
 		 * Wzór ramki: [ : | nr ramki | dane | @ ]
 		 * */
@@ -102,6 +102,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 				break;
 			case 2:
 				HAL_UART_Receive_IT(&huart2,(uint8_t*) &s1, sizeof(s1));
+				state_u2 = 3;
+				break;
+			case '1':
+				HAL_UART_Receive_IT(&huart2,(uint8_t*) data, sizeof(data));
 				state_u2 = 3;
 				break;
 			default:
@@ -188,10 +192,10 @@ int main(void)
   HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_ALL);
   HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
 
-  motor_Init(&Left_F);
+  motor_Init_With_Correction(&Left_F);
   motor_Init(&Left_R);
-  motor_Init(&Right_F);
-  motor_Init(&Right_F);
+  motor_Init_With_Correction(&Right_F);
+  motor_Init(&Right_R);
 
 
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_ALL);

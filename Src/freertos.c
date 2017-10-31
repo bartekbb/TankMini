@@ -65,7 +65,9 @@ osThreadId UartSendTaskHandle;
 /* USER CODE BEGIN Variables */
 extern uint8_t frameCplt;
 extern To_STM_Motor_Speed s1;
-
+extern char data[2];
+char ramka[256];
+int size;
 
 /* USER CODE END Variables */
 
@@ -74,7 +76,6 @@ void StartDefaultTask(void const * argument);
 void TaskFunction02(void const * argument);
 void UartSendTaskFunction(void const * argument);
 
-extern void MX_FATFS_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* USER CODE BEGIN FunctionPrototypes */
@@ -82,6 +83,17 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 /* USER CODE END FunctionPrototypes */
 
 /* Hook prototypes */
+void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName);
+
+/* USER CODE BEGIN 4 */
+__weak void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName)
+{
+   /* Run time stack overflow checking is performed if
+   configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2. This hook function is
+   called if a stack overflow is detected. */
+
+}
+/* USER CODE END 4 */
 
 /* Init FreeRTOS */
 
@@ -127,24 +139,29 @@ void MX_FREERTOS_Init(void) {
 /* StartDefaultTask function */
 void StartDefaultTask(void const * argument)
 {
-  /* init code for FATFS */
-  MX_FATFS_Init();
 
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
   for(;;)
   {
 	if (frameCplt){
+		HAL_GPIO_TogglePin(R_A2_GPIO_Port, R_A2_Pin);
 		frameCplt=0;
 		if( s1.turnON == 1){
-			if (s1.speedL >=-100 && s1.speedL <= 100){ Left_F.speed = s1.speedL; Left_R.speed = s1.speedL;}
-			if (s1.speedR >=-100 && s1.speedR <= 100){ Right_F.speed = s1.speedR; Right_R.speed = s1.speedR;}
+			//if (s1.speedL >=-100 && s1.speedL <= 100){ Left_F.speed = s1.speedL; Left_R.speed = s1.speedL;}
+			//if (s1.speedR >=-100 && s1.speedR <= 100){ Right_F.speed = s1.speedR; Right_R.speed = s1.speedR;}
 		}
 		else{
-			Left_F.speed = 0;
+			/*Left_F.speed = 0;
 			Left_R.speed = 0;
 			Right_F.speed = 0;
 			Right_R.speed = 0;
+			*/
+			Left_F.speed = (int)data[0];
+			Left_R.speed = (int)data[0];
+			Right_F.speed = (int)data[1];
+			Right_R.speed = (int)data[1];
+
 		}
 	}
     osDelay(1);
@@ -159,11 +176,9 @@ void TaskFunction02(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	  Left_F.speed = 30;
-	  Left_R.speed = 30;
-	  Right_F.speed = 30;
-	  Right_R.speed = 30;
-	  motor_Set_Speed(&Left_F, &Left_R, &Right_F, &Right_R);
+	  motor_Set_Speed_HW(&Left_F, &Left_R, &Right_F, &Right_R);
+
+	  vTaskDelay(50);
     osDelay(1);
   }
   /* USER CODE END TaskFunction02 */
@@ -176,8 +191,16 @@ void UartSendTaskFunction(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	  const char tab[] =  "Testowa ramka danych do wyslania";
-	  HAL_UART_Transmit_IT(&huart2,(uint8_t*) tab, sizeof(tab));
+	  //const char tab[] =  "Testowa ramka danych do wyslania\n\r";
+	  //size = sprintf(ramka, "VLF1:%d | VLR:%d | VRF:%d | VRR:%d\n\r", Left_F.speed, Left_R.speed, Right_F.speed, Right_R.speed  );
+	  //size = sprintf(ramka, "MTzero:%d | MTsto:%d | LTzero:%d | LTminsto:%d\n\r", MTzero, MTsto, LTzero, LTminsto  );
+	  //size = sprintf(ramka, "CCR1:%d | CCR2:%d | CCR3:%d | CCR4:%d | L_A1:%d | L_A2:%d | R_A1:%d | R_A2:%d\n\r",
+		//	  (int)htim3.Instance->CCR1, (int)htim3.Instance->CCR2, (int)htim3.Instance->CCR3, (int)htim3.Instance->CCR1, L_A1, L_A2, R_A1, R_A2  );
+	  size = sprintf(ramka, "CCR1:%d | CCR2:%d | CCR3:%d | CCR4:%d | VLF1:%d | VLR:%d | VRF:%d | VRR:%d\r\n",
+	  			  (int)htim3.Instance->CCR1, (int)htim3.Instance->CCR2, (int)htim3.Instance->CCR3, (int)htim3.Instance->CCR4, Left_F.speed, Left_R.speed, Right_F.speed, Right_R.speed  );
+	  HAL_UART_Transmit_IT(&huart2,(uint8_t*) ramka, size);
+	  //HAL_UART_Transmit_IT(&huart2,(uint8_t*) tab, sizeof(tab));
+
 	  vTaskDelay(500);
     osDelay(1);
   }

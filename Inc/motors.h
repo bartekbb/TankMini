@@ -23,8 +23,12 @@ typedef struct Motor {
 
 extern Motor Left_F, Left_R, Right_F, Right_R;
 
+// Debug vars
+extern uint8_t L_A1, L_A2, R_A1, R_A2;
+//
 
-void motor_Set_Speed(Motor* LF, Motor* LR, Motor* RF, Motor* RR );
+void motor_Speed(Motor* m, int value);
+void motor_Set_Speed_HW(Motor* LF, Motor* LR, Motor* RF, Motor* RR );
 /* Function sets speeds to CCRx registers */
 
 void motor_Calculate_Speed(Motor* motor);
@@ -32,6 +36,6 @@ void motor_Calculate_Speed(Motor* motor);
 
 
 void motor_Init(Motor * m);
-void motor_Init_With_Correction (Motor* LF, Motor* RF);
+void motor_Init_With_Correction (Motor* m);
 
 #endif /* APPLICATION_USER_MOTORS_H_ */
