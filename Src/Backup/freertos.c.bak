@@ -68,6 +68,7 @@ extern To_STM_Motor_Speed s1;
 extern char data[2];
 char ramka[256];
 int size;
+int loop=40;
 
 /* USER CODE END Variables */
 
@@ -116,15 +117,15 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512);
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of Task02 */
-  osThreadDef(Task02, TaskFunction02, osPriorityNormal, 0, 512);
+  osThreadDef(Task02, TaskFunction02, osPriorityNormal, 0, 128);
   Task02Handle = osThreadCreate(osThread(Task02), NULL);
 
   /* definition and creation of UartSendTask */
-  osThreadDef(UartSendTask, UartSendTaskFunction, osPriorityBelowNormal, 0, 512);
+  osThreadDef(UartSendTask, UartSendTaskFunction, osPriorityBelowNormal, 0, 128);
   UartSendTaskHandle = osThreadCreate(osThread(UartSendTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -145,7 +146,7 @@ void StartDefaultTask(void const * argument)
   for(;;)
   {
 	if (frameCplt){
-
+		HAL_GPIO_TogglePin(R_A2_GPIO_Port, R_A2_Pin);
 		frameCplt=0;
 		if( s1.turnON == 1){
 			//if (s1.speedL >=-100 && s1.speedL <= 100){ Left_F.speed = s1.speedL; Left_R.speed = s1.speedL;}
@@ -157,18 +158,13 @@ void StartDefaultTask(void const * argument)
 			Right_F.speed = 0;
 			Right_R.speed = 0;
 			*/
-			//motor_Speed(&Left_F, (int)data[0]);
-			//motor_Speed(&Left_R, (int)data[0]);
-			//motor_Speed(&Right_F, (int)data[1]);
-			//motor_Speed(&Right_R, (int)data[1]);
+			Left_F.speed = (int)data[0];
+			Left_R.speed = (int)data[0];
+			Right_F.speed = (int)data[1];
+			Right_R.speed = (int)data[1];
 
 		}
 	}
-	//Left_F.speed = 50;
-	//Left_R.speed = 50;
-	//Right_F.speed = 50;
-	//Right_R.speed = 50;
-	//vTaskDelay(10);
     osDelay(1);
   }
   /* USER CODE END StartDefaultTask */
@@ -181,11 +177,13 @@ void TaskFunction02(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	  motor_Set_Speed_HW(&Left_F, &Left_R, &Right_F, &Right_R);
-	  size = sprintf(ramka, "CCR1:%d | CCR2:%d | CCR3:%d | CCR4:%d | VLF1:%d | VLR:%d | VRF:%d | VRR:%d\r\n",
-	  			  (int)htim3.Instance->CCR1, (int)htim3.Instance->CCR2, (int)htim3.Instance->CCR3, (int)htim3.Instance->CCR1, Left_F.speed, Left_R.speed, Right_F.speed, Right_R.speed  );
+	  //motor_Set_Speed_HW(&Left_F, &Left_R, &Right_F, &Right_R);
 
-	  vTaskDelay(100);
+	  TIM3->CCR1 = loop;
+	  TIM3->CCR2 = loop;
+	  TIM3->CCR3 = loop;
+	  TIM3->CCR4 = loop;
+	  vTaskDelay(10);
     osDelay(1);
   }
   /* USER CODE END TaskFunction02 */
@@ -203,6 +201,8 @@ void UartSendTaskFunction(void const * argument)
 	  //size = sprintf(ramka, "MTzero:%d | MTsto:%d | LTzero:%d | LTminsto:%d\n\r", MTzero, MTsto, LTzero, LTminsto  );
 	  //size = sprintf(ramka, "CCR1:%d | CCR2:%d | CCR3:%d | CCR4:%d | L_A1:%d | L_A2:%d | R_A1:%d | R_A2:%d\n\r",
 		//	  (int)htim3.Instance->CCR1, (int)htim3.Instance->CCR2, (int)htim3.Instance->CCR3, (int)htim3.Instance->CCR1, L_A1, L_A2, R_A1, R_A2  );
+	  size = sprintf(ramka, "CCR1:%d | CCR2:%d | CCR3:%d | CCR4:%d | VLF1:%d | VLR:%d | VRF:%d | VRR:%d\r\n",
+	  			  (int)htim3.Instance->CCR1, (int)htim3.Instance->CCR2, (int)htim3.Instance->CCR3, (int)htim3.Instance->CCR4, Left_F.speed, Left_R.speed, Right_F.speed, Right_R.speed  );
 	  HAL_UART_Transmit_IT(&huart2,(uint8_t*) ramka, size);
 	  //HAL_UART_Transmit_IT(&huart2,(uint8_t*) tab, sizeof(tab));
 

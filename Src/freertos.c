@@ -68,6 +68,7 @@ extern To_STM_Motor_Speed s1;
 extern char data[2];
 char ramka[256];
 int size;
+int loop=40;
 
 /* USER CODE END Variables */
 
@@ -176,9 +177,13 @@ void TaskFunction02(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	  motor_Set_Speed_HW(&Left_F, &Left_R, &Right_F, &Right_R);
+	  //motor_Set_Speed_HW(&Left_F, &Left_R, &Right_F, &Right_R);
 
-	  vTaskDelay(50);
+	  TIM3->CCR1 = loop;
+	  TIM3->CCR2 = loop;
+	  TIM3->CCR3 = loop;
+	  TIM3->CCR4 = loop;
+	  vTaskDelay(10);
     osDelay(1);
   }
   /* USER CODE END TaskFunction02 */

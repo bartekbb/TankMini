@@ -198,7 +198,11 @@ int main(void)
   motor_Init(&Right_R);
 
 
-  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_ALL);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
+
 
   HAL_UART_Receive_IT(&huart2, &recByte_u2, 1);
   HAL_UART_Receive_IT(&huart3, &recByte_u3, 1);
