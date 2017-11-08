@@ -146,7 +146,7 @@ void StartDefaultTask(void const * argument)
   for(;;)
   {
 	if (frameCplt){
-		HAL_GPIO_TogglePin(R_A2_GPIO_Port, R_A2_Pin);
+		//HAL_GPIO_TogglePin(R_A2_GPIO_Port, R_A2_Pin);
 		frameCplt=0;
 		if( s1.turnON == 1){
 			//if (s1.speedL >=-100 && s1.speedL <= 100){ Left_F.speed = s1.speedL; Left_R.speed = s1.speedL;}
@@ -179,10 +179,10 @@ void TaskFunction02(void const * argument)
   for(;;)
   {
 
-	  Left_F.speed = -30;
-	  Left_R.speed = -40;
-	  Right_F.speed = -50;
-	  Right_R.speed = -60;
+	  //Left_F.speed = -30;
+	  //Left_R.speed = -40;
+	  //Right_F.speed = -50;
+	  //Right_R.speed = -60;
 	  motor_Set_Speed_HW(&Left_F, &Left_R, &Right_F, &Right_R);
 
 	  vTaskDelay(10);

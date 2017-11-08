@@ -208,8 +208,8 @@ int main(void)
   TIM3->CCR4 = 30;
 
 
-  //HAL_UART_Receive_IT(&huart2, &recByte_u2, 1);
-  //HAL_UART_Receive_IT(&huart3, &recByte_u3, 1);
+  HAL_UART_Receive_IT(&huart2, &recByte_u2, 1);
+  HAL_UART_Receive_IT(&huart3, &recByte_u3, 1);
 
   /* USER CODE END 2 */
 
