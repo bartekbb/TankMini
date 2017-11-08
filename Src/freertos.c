@@ -158,6 +158,7 @@ void StartDefaultTask(void const * argument)
 			Right_F.speed = 0;
 			Right_R.speed = 0;
 			*/
+
 			Left_F.speed = (int)data[0];
 			Left_R.speed = (int)data[0];
 			Right_F.speed = (int)data[1];
@@ -177,13 +178,15 @@ void TaskFunction02(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	  //motor_Set_Speed_HW(&Left_F, &Left_R, &Right_F, &Right_R);
 
-	  TIM3->CCR1 = loop;
-	  TIM3->CCR2 = loop;
-	  TIM3->CCR3 = loop;
-	  TIM3->CCR4 = loop;
+	  Left_F.speed = -30;
+	  Left_R.speed = -40;
+	  Right_F.speed = -50;
+	  Right_R.speed = -60;
+	  motor_Set_Speed_HW(&Left_F, &Left_R, &Right_F, &Right_R);
+
 	  vTaskDelay(10);
+
     osDelay(1);
   }
   /* USER CODE END TaskFunction02 */
@@ -207,6 +210,7 @@ void UartSendTaskFunction(void const * argument)
 	  //HAL_UART_Transmit_IT(&huart2,(uint8_t*) tab, sizeof(tab));
 
 	  vTaskDelay(500);
+
     osDelay(1);
   }
   /* USER CODE END UartSendTaskFunction */

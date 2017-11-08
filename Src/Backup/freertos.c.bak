@@ -144,7 +144,7 @@ void StartDefaultTask(void const * argument)
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
   for(;;)
-  {
+  {/*
 	if (frameCplt){
 		HAL_GPIO_TogglePin(R_A2_GPIO_Port, R_A2_Pin);
 		frameCplt=0;
@@ -157,14 +157,14 @@ void StartDefaultTask(void const * argument)
 			Left_R.speed = 0;
 			Right_F.speed = 0;
 			Right_R.speed = 0;
-			*/
+
 			Left_F.speed = (int)data[0];
 			Left_R.speed = (int)data[0];
 			Right_F.speed = (int)data[1];
 			Right_R.speed = (int)data[1];
 
 		}
-	}
+	}*/
     osDelay(1);
   }
   /* USER CODE END StartDefaultTask */
@@ -178,12 +178,13 @@ void TaskFunction02(void const * argument)
   for(;;)
   {
 	  //motor_Set_Speed_HW(&Left_F, &Left_R, &Right_F, &Right_R);
-
+	  /*
 	  TIM3->CCR1 = loop;
 	  TIM3->CCR2 = loop;
 	  TIM3->CCR3 = loop;
 	  TIM3->CCR4 = loop;
 	  vTaskDelay(10);
+	  */
     osDelay(1);
   }
   /* USER CODE END TaskFunction02 */
@@ -195,7 +196,7 @@ void UartSendTaskFunction(void const * argument)
   /* USER CODE BEGIN UartSendTaskFunction */
   /* Infinite loop */
   for(;;)
-  {
+  {/*
 	  //const char tab[] =  "Testowa ramka danych do wyslania\n\r";
 	  //size = sprintf(ramka, "VLF1:%d | VLR:%d | VRF:%d | VRR:%d\n\r", Left_F.speed, Left_R.speed, Right_F.speed, Right_R.speed  );
 	  //size = sprintf(ramka, "MTzero:%d | MTsto:%d | LTzero:%d | LTminsto:%d\n\r", MTzero, MTsto, LTzero, LTminsto  );
@@ -207,6 +208,7 @@ void UartSendTaskFunction(void const * argument)
 	  //HAL_UART_Transmit_IT(&huart2,(uint8_t*) tab, sizeof(tab));
 
 	  vTaskDelay(500);
+	  */
     osDelay(1);
   }
   /* USER CODE END UartSendTaskFunction */

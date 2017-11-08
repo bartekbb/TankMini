@@ -80,18 +80,18 @@ void motor_Set_Speed_HW(Motor* LF, Motor* LR, Motor* RF, Motor* RR ){
 
 	if(RR->speed > 0){
 		R_A1 = 1; R_A2 = 0;
-		HAL_GPIO_WritePin(R_A1_GPIO_Port,L_A1_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(R_A2_GPIO_Port,L_A2_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(R_A1_GPIO_Port,R_A1_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(R_A2_GPIO_Port,R_A2_Pin, GPIO_PIN_RESET);
 	}else {
 		if(RR->speed == 0){
 			R_A1 = 1; R_A2 = 1;
-			HAL_GPIO_WritePin(R_A1_GPIO_Port,L_A1_Pin, GPIO_PIN_SET);
-			HAL_GPIO_WritePin(R_A2_GPIO_Port,L_A2_Pin, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(R_A1_GPIO_Port,R_A1_Pin, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(R_A2_GPIO_Port,R_A2_Pin, GPIO_PIN_SET);
 		}
 		else{
 			R_A1 = 0; R_A2 = 1;
-			HAL_GPIO_WritePin(R_A1_GPIO_Port,L_A1_Pin, GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(R_A2_GPIO_Port,L_A2_Pin, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(R_A1_GPIO_Port,R_A1_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(R_A2_GPIO_Port,R_A2_Pin, GPIO_PIN_SET);
 		}
 	}
 

@@ -51,7 +51,6 @@
 #include "cmsis_os.h"
 #include "adc.h"
 #include "dma.h"
-#include "i2c.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -180,7 +179,6 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_ADC1_Init();
-  MX_I2C1_Init();
   MX_SPI2_Init();
   MX_TIM1_Init();
   MX_TIM2_Init();
@@ -203,9 +201,14 @@ int main(void)
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
 
+  TIM3->CCR1 = 30;
+  TIM3->CCR2 = 30;
+  TIM3->CCR3 = 30;
+  TIM3->CCR4 = 30;
 
-  HAL_UART_Receive_IT(&huart2, &recByte_u2, 1);
-  HAL_UART_Receive_IT(&huart3, &recByte_u3, 1);
+
+  //HAL_UART_Receive_IT(&huart2, &recByte_u2, 1);
+  //HAL_UART_Receive_IT(&huart3, &recByte_u3, 1);
 
   /* USER CODE END 2 */
 
